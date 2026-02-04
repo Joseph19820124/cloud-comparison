@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigitalOcean vs AWS 云服务对比</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        .header {
+            background: linear-gradient(135deg, #0069ff 0%, #6b5ce7 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+        }
+        .logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .logos span {
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+        }
+        .vs {
+            font-size: 20px;
+            opacity: 0.7;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .summary-card.do {
+            border-top: 4px solid #0069ff;
+        }
+        .summary-card.aws {
+            border-top: 4px solid #ff9900;
+        }
+        .summary-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        .summary-card.do h3 { color: #0069ff; }
+        .summary-card.aws h3 { color: #ff9900; }
+        .summary-card ul {
+            list-style: none;
+        }
+        .summary-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .summary-card li:last-child {
+            border-bottom: none;
+        }
+        .comparison-table {
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 50px;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 18px 20px;
+            text-align: left;
+        }
+        .comparison-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+        .comparison-table th:first-child {
+            width: 25%;
+        }
+        .comparison-table tr:not(:last-child) td {
+            border-bottom: 1px solid #eee;
+        }
+        .comparison-table td:nth-child(2) {
+            color: #0069ff;
+        }
+        .comparison-table td:nth-child(3) {
+            color: #ff9900;
+        }
+        .price {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .winner {
+            background: #e8f5e9 !important;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .badge.cheaper { background: #4caf50; color: white; }
+        .badge.free { background: #2196f3; color: white; }
+        .verdict {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 50px;
+        }
+        .verdict h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+        .verdict-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        .verdict-item {
+            padding: 25px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+        .verdict-item h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .verdict-item.do-wins { border-left: 4px solid #0069ff; }
+        .verdict-item.aws-wins { border-left: 4px solid #ff9900; }
+        .verdict-item.tie { border-left: 4px solid #9e9e9e; }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+            font-size: 14px;
+        }
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px 20px;
+            margin: 30px 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Cloud Provider Comparison</h1>
+        <p>2026 年云服务价格与功能深度对比</p>
+        <div class="logos">
+            <span>DigitalOcean</span>
+            <span class="vs">VS</span>
+            <span>AWS</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">平台定位</h2>
+        <div class="summary-cards">
+            <div class="summary-card do">
+                <h3>DigitalOcean</h3>
+                <ul>
+                    <li><strong>定位:</strong> 开发者友好、中小企业</li>
+                    <li><strong>特点:</strong> 简单、透明定价</li>
+                    <li><strong>服务数量:</strong> ~20+ 核心服务</li>
+                    <li><strong>学习曲线:</strong> 低，几分钟上手</li>
+                    <li><strong>计费:</strong> 按秒计费，最低 60 秒</li>
+                    <li><strong>免费额度:</strong> 慷慨 (静态站点、DNS、防火墙)</li>
+                </ul>
+            </div>
+            <div class="summary-card aws">
+                <h3>Amazon Web Services</h3>
+                <ul>
+                    <li><strong>定位:</strong> 企业级、全场景覆盖</li>
+                    <li><strong>特点:</strong> 功能全面、生态丰富</li>
+                    <li><strong>服务数量:</strong> 200+ 服务</li>
+                    <li><strong>学习曲线:</strong> 陡峭，需要专业知识</li>
+                    <li><strong>计费:</strong> 复杂，多维度计费</li>
+                    <li><strong>免费额度:</strong> 12 个月免费套餐</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 class="section-title">价格对比</h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>服务类型</th>
+                    <th>DigitalOcean</th>
+                    <th>AWS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>入门级虚拟机</strong><br><small>1 vCPU, 1GB RAM</small></td>
+                    <td class="winner"><span class="price">$4/月</span> (Droplet)<span class="badge cheaper">更便宜</span></td>
+                    <td><span class="price">~$8.5/月</span> (t3.micro)</td>
+                </tr>
+                <tr>
+                    <td><strong>中型虚拟机</strong><br><small>2 vCPU, 4GB RAM</small></td>
+                    <td class="winner"><span class="price">$24/月</span><span class="badge cheaper">更便宜</span></td>
+                    <td><span class="price">~$30/月</span> (t3.medium)</td>
+                </tr>
+                <tr>
+                    <td><strong>Kubernetes</strong><br><small>托管 K8s 控制平面</small></td>
+                    <td class="winner"><span class="price">$12/月</span><span class="badge cheaper">更便宜</span></td>
+                    <td><span class="price">$72/月</span> (EKS)</td>
+                </tr>
+                <tr>
+                    <td><strong>对象存储</strong><br><small>S3 兼容存储</small></td>
+                    <td class="winner"><span class="price">$5/月</span> (250GB)<span class="badge cheaper">更便宜</span></td>
+                    <td><span class="price">~$5.75/月</span> (250GB S3)</td>
+                </tr>
+                <tr>
+                    <td><strong>负载均衡</strong></td>
+                    <td class="winner"><span class="price">$12/月</span><span class="badge cheaper">更便宜</span></td>
+                    <td><span class="price">~$18/月</span> (ALB)</td>
+                </tr>
+                <tr>
+                    <td><strong>托管数据库</strong><br><small>PostgreSQL 基础版</small></td>
+                    <td class="winner"><span class="price">$15/月</span><span class="badge cheaper">更便宜</span></td>
+                    <td><span class="price">~$25/月</span> (RDS)</td>
+                </tr>
+                <tr>
+                    <td><strong>静态网站托管</strong></td>
+                    <td class="winner"><span class="price">免费</span> (3 个站点)<span class="badge free">免费</span></td>
+                    <td><span class="price">~$1-5/月</span> (S3 + CloudFront)</td>
+                </tr>
+                <tr>
+                    <td><strong>DNS 管理</strong></td>
+                    <td class="winner"><span class="price">免费</span><span class="badge free">免费</span></td>
+                    <td><span class="price">$0.50/域/月</span> (Route 53)</td>
+                </tr>
+                <tr>
+                    <td><strong>防火墙</strong></td>
+                    <td class="winner"><span class="price">免费</span><span class="badge free">免费</span></td>
+                    <td><span class="price">免费</span> (Security Groups)</td>
+                </tr>
+                <tr>
+                    <td><strong>出站流量</strong><br><small>每月基础额度</small></td>
+                    <td class="winner"><span class="price">500GB 免费</span>/Droplet<span class="badge cheaper">更划算</span></td>
+                    <td><span class="price">100GB 免费</span> 然后 $0.09/GB</td>
+                </tr>
+                <tr>
+                    <td><strong>GPU 实例</strong><br><small>AI/ML 训练</small></td>
+                    <td><span class="price">$1.49/GPU/小时</span></td>
+                    <td class="winner"><span class="price">更多选择</span> (P4, G5, Inf2)<span class="badge">更强大</span></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="note">
+            <strong>注意:</strong> AWS 价格因区域而异，上表以 us-east-1 为参考。实际费用可能因使用模式、预留实例折扣等因素变化。
+        </div>
+
+        <h2 class="section-title">结论与建议</h2>
+        <div class="verdict">
+            <h2>什么时候选择谁？</h2>
+            <div class="verdict-grid">
+                <div class="verdict-item do-wins">
+                    <h4>选择 DigitalOcean</h4>
+                    <p>初创公司、个人项目、中小型 Web 应用、预算有限、需要简单透明定价、快速部署</p>
+                </div>
+                <div class="verdict-item aws-wins">
+                    <h4>选择 AWS</h4>
+                    <p>大型企业、复杂架构需求、需要特定服务 (如 Lambda、DynamoDB、SageMaker)、全球部署、合规要求</p>
+                </div>
+                <div class="verdict-item do-wins">
+                    <h4>成本敏感型项目</h4>
+                    <p>DigitalOcean 平均便宜 20-40%，且定价透明，不会有意外账单</p>
+                </div>
+                <div class="verdict-item aws-wins">
+                    <h4>企业级功能需求</h4>
+                    <p>AWS 提供更完整的 IAM、审计、合规认证、混合云方案</p>
+                </div>
+                <div class="verdict-item tie">
+                    <h4>开发测试环境</h4>
+                    <p>两者都适合，DigitalOcean 更简单快速，AWS 免费套餐额度更高</p>
+                </div>
+                <div class="verdict-item do-wins">
+                    <h4>Kubernetes 入门</h4>
+                    <p>DigitalOcean K8s 控制平面 $12/月 vs AWS EKS $72/月，差距 6 倍</p>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">架构对比</h2>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>架构特点</th>
+                    <th>DigitalOcean</th>
+                    <th>AWS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>数据中心数量</strong></td>
+                    <td>15 个区域</td>
+                    <td class="winner">33 个区域, 105 个可用区</td>
+                </tr>
+                <tr>
+                    <td><strong>CDN</strong></td>
+                    <td>Spaces CDN (基础)</td>
+                    <td class="winner">CloudFront (450+ PoP)</td>
+                </tr>
+                <tr>
+                    <td><strong>Serverless</strong></td>
+                    <td>Functions (基础)</td>
+                    <td class="winner">Lambda (成熟生态)</td>
+                </tr>
+                <tr>
+                    <td><strong>数据库选择</strong></td>
+                    <td>6 种 (PostgreSQL, MySQL, MongoDB, Kafka, Valkey, OpenSearch)</td>
+                    <td class="winner">15+ 种 (含 Aurora, DynamoDB, Redshift 等)</td>
+                </tr>
+                <tr>
+                    <td><strong>AI/ML 服务</strong></td>
+                    <td>Gradient AI (新)</td>
+                    <td class="winner">SageMaker, Bedrock, 完整生态</td>
+                </tr>
+                <tr>
+                    <td><strong>混合云支持</strong></td>
+                    <td>有限</td>
+                    <td class="winner">Outposts, 完整方案</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        <p>数据更新于 2026 年 2 月 | 价格以官方网站为准</p>
+        <p>DigitalOcean: digitalocean.com | AWS: aws.amazon.com</p>
+    </div>
+</body>
+</html>
